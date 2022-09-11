@@ -1,23 +1,35 @@
-import logo from './logo.svg';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import './App.css';
+import CartContainer from './components/cartContainer/CartContainer';
+import Modal from './components/model/Modal';
+import NavBar from './components/navbar/NavBar';
+import { calculateTotals, getCartItems } from './store/cartSlice';
 
 function App() {
+  const {cartItems, isLoading} = useSelector((state) => state.cart);
+  const {isOpen} = useSelector((state) => state.modal);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(calculateTotals());
+  },[
+    cartItems
+  ])
+  useEffect(() => {
+    dispatch(getCartItems())
+  },[])
+  if(isLoading) {
+    return(
+      <div className='loading'>
+        <h1>Loading...</h1>
+      </div>
+    )
+  }
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {isOpen && <Modal />}
+      <NavBar />
+      <CartContainer />
     </div>
   );
 }
